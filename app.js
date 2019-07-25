@@ -1,4 +1,5 @@
 // Readymade modules
+const mongoose = require('mongoose');
 const http = require("http");
 const express = require("express");
 const path = require("path");
@@ -9,8 +10,7 @@ const expressValidator = require("express-validator");
 const cookieParser = require("cookie-parser");
 
 // Created Modules
-const config = require("./config");
-const Database = require("./DB/database");
+const Database = require("./database/database");
 
 // Load dotenv config
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
@@ -76,19 +76,13 @@ app.use((err, req, res) => {
 	});
 });
 
-
-// db configuration
-Database.config(
-	process.env.NODE_ENV === "production" ? process.env.PROD_ADDRESS : process.env.DEV_ADDRESS,
-	process.env.NODE_ENV === "production" ? process.env.PROD_DBNAME : process.env.DEV_DBNAME,
-	process.env.NODE_ENV === "production" ? process.env.PROD_USERNAME : process.env.DEV_USERNAME,
-	process.env.NODE_ENV === "production" ? process.env.PROD_PASSWORD : process.env.DEV_PASSWORD,
-	config && config.databaseOption ? config.databaseOption : undefined,
-	(err, message) => {
-		if (!err) console.info("Mongodb is connected");
-		else console.error(`Mongodb Error:${message}`);
-	},
+/** Mongoose DataBase Connection */
+mongoose.Promise = global.Promise;
+mongoose.connect(Database.DB, { useNewUrlParser: true }).then(
+  () => { console.log('Database is connected') },
+  err => { console.log('Can not connect to the database' + err) }
 );
+
 
 server.listen(process.env.PORT);
 console.log(`Server started on port ${process.env.PORT}`);

@@ -1,4 +1,5 @@
 module.exports = {
+	// validation for user signup
 	signup(req, res, next) {
 		req.checkBody("firstName", "Firstname is required").trim().notEmpty();
 		req.checkBody("lastName", "Lastname is required").trim().notEmpty();
@@ -18,6 +19,8 @@ module.exports = {
 				errors: errors[0].msg,
 			}));
 	},
+
+	// login validation
 	login(req, res, next) {
 		req.checkBody("userName", "Username is required").trim().notEmpty();
 		req.checkBody("password", "Password is required").trim().notEmpty();
@@ -31,13 +34,27 @@ module.exports = {
 				errors: errors[0].msg,
 			}));
 	},
+
+	// change password validation
 	updatePassword(req, res, next) {
-		// req.checkBody("hash", "Reset password hash is required").trim().notEmpty();
-		req.checkBody("password", "Password is required").trim().notEmpty();
-		req.checkBody("currentPassword", "currentPassword is required").trim().notEmpty();
-		req.checkBody("newPassword", "newPassword password is required").trim().notEmpty();
-		req.checkBody("newPassword", "newPassword password is not match with password").equals(req.body.password);
-		req.checkBody("password", "Password must be 8 to 20 length").trim().len(8, 20);
+		req.checkBody("email", "Email is required").trim().notEmpty();
+		req.checkBody("newPassword", "New password is required").trim().notEmpty();
+		req.checkBody("confirmPassword", "ConfirmPassword is not match with password").equals(req.body.newPassword);
+
+		req.asyncValidationErrors()
+		.then(() => {
+			next();
+		})
+		.catch(errors => res.json({
+			success: false,
+			errors: errors[0].msg,
+		}));
+	},
+
+	// forgot password validation
+	resetPassword(req, res, next) {
+		req.checkBody("email", "Email is required").trim().notEmpty();
+		req.checkBody("email", "Email is not valid").trim().isEmail();
 
 		req.asyncValidationErrors()
 			.then(() => {

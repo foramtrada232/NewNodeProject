@@ -10,6 +10,8 @@ const UserSchema = new mongoose.Schema({
 	userName: { type: String, required: true },
 	password: { type: String, required: true },
 	email: { type: String, required: true },
+	emailHash: { type: String },
+	emailConfirmation: { type: Boolean, default: false },
 	resetPasswordHash: { type: String },
 	createdAt: {
 		type: Date,
@@ -33,14 +35,6 @@ UserSchema.pre('save', function (next) {
 		});
 	});
  });
-
- UserSchema.methods.comparePassword = function(userPassword, password, cb) {
-    bcrypt.compare(userPassword, password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
-    });
-};
-
 
 
 module.exports = mongoose.model("users", UserSchema);

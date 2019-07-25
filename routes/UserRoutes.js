@@ -11,8 +11,10 @@ const UserValidation = require("../validations/UserValidations");
 router.post("/signup", UserValidation.signup, UserController.signup);
 router.post("/login",UserValidation.login, UserController.login);
 
-router.post(withAuth);
+router.use(withAuth);
+
 router.post("/updatePassword",UserValidation.updatePassword, UserController.updatePassword);
-router.post("/forgotPassword", UserController.forgotPassword);
+router.post("/resetPassword",UserValidation.resetPassword,UserController.resetPassword)
+router.get("/email-verify/:hash", UserController.emailVerification);
 
 module.exports = router;
