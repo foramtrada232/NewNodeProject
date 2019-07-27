@@ -14,7 +14,8 @@ module.exports = {
 			userName: req.body.userName,
 			password: req.body.password,
 			emailConfirmation: req.body.emailConfirmation,
-			emailHash: req.body.emailHash
+			emailHash: req.body.emailHash,
+			images: req.file
 		};
 		UserService.signup(userData).then((response) => {
 			return res.status(200).json({ status: true, message: response.message, data: response.data, token: response.token });
@@ -65,8 +66,6 @@ module.exports = {
 			resetPasswordHash,
 			link: req.protocol + '://' + req.get('host')
 		}
-		console.log("hello:",req.protocol );
-		console.log("Hello foram:",req.get('host'));
 		UserService.resetPassword(userData).then((response) => {
 			return res.status(200).json({ message: response.message });
 		}).catch((error) => {

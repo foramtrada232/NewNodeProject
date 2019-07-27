@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema({
 	emailHash: { type: String },
 	emailConfirmation: { type: Boolean, default: false },
 	resetPasswordHash: { type: String },
+	images: String,
 	createdAt: {
 		type: Date,
 		default: new Date(),
@@ -22,6 +23,8 @@ const UserSchema = new mongoose.Schema({
 		default: new Date(),
 	},
 });
+
+// Boolean: --> hasMoney, canDance, isAvailable (has, can, is)
 
 
 UserSchema.pre('save', function (next) {

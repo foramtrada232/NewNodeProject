@@ -5,18 +5,21 @@ const jwt = require("jsonwebtoken");
 const CYPHERKEY = process.env.CYPHERKEY;
 const clc = require("cli-color");
 const clcError = clc.red.bold;
+const multer = require('multer');
 
 // Service
 const EmailService = require("./EmailService");
 
 
 module.exports = {
+    
 
     /** 
      * @param {object} userData user details 
      */
     signup: (userData) => {
         return new Promise((resolve, reject) => {
+            userData.images = file.filename;
             UserModel.create(userData).then(() => {
                 resolve({ status: 200, message: "New user added successfully.", status: true, });
             }).catch((error) => {
