@@ -1,5 +1,6 @@
 const randomstring = require("randomstring");
 
+
 // Service
 const UserService = require('../services/UserService')
 
@@ -7,17 +8,13 @@ module.exports = {
 
 	// user sign up
 	signup(req, res) {
-		const userData = {
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			email: req.body.email,
-			userName: req.body.userName,
-			password: req.body.password,
-			emailConfirmation: req.body.emailConfirmation,
-			emailHash: req.body.emailHash,
-			images: req.file
-		};
-		UserService.signup(userData).then((response) => {
+		// console.log("req:,",req)
+		const userData = 
+			req.body;
+		const file = req.files;
+		console.log("body:",req.body)
+		console.log("file",req.files)
+		UserService.signup(userData,file).then((response) => {
 			return res.status(200).json({ status: true, message: response.message, data: response.data, token: response.token });
 		}).catch((error) => {
 			console.log('error:', error);

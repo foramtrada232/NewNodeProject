@@ -10,10 +10,11 @@ const upload = (file) => {
            cb(null, './uploads/')
        },
        filename: function (req, file, cb) {
-           cb(null, file.fieldname + '-' + Date.now())
+           console.log("middelware file:",file)
+           cb(null, file.fieldname + '_' + Date.now())
        }
    })
-   return multer({ storage: storage }).array(file);
+   return multer({ storage: storage }).array(file); 
 }
 
 module.exports = {

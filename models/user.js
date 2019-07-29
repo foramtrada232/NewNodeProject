@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
 	emailHash: { type: String },
 	emailConfirmation: { type: Boolean, default: false },
 	resetPasswordHash: { type: String },
-	images: String,
+	images: [],
 	createdAt: {
 		type: Date,
 		default: new Date(),
