@@ -34,7 +34,7 @@ module.exports = {
 				errors: errors[0].msg,
 			}));
 	},
-
+	
 	// change password validation
 	updatePassword(req, res, next) {
 		req.checkBody("email", "Email is required").trim().notEmpty();

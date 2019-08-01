@@ -18,29 +18,22 @@ module.exports = {
      * @param {object} userData user details 
      */
     signup: (userData,file) => {
-        console.log("userdata==========>",userData);
-        let images;
         return new Promise((resolve, reject) => {
-            // userData.images = ;
-            console.log("file in service:",file)
             UserModel.create(userData).then((user) => {
-                console.log("user-=====>",user)
-                // userData.images = file[0].filename;
-                if (file.length > 0) {
-					_.forEach(file, (gotFile) => {
-                      user.images.push(gotFile.filename)
-                    })
-                    console.log("userimages============>",user.images);
-                }
-                userData.images = user.images;
-                UserModel.findOneAndUpdate({ _id: user._id }, { $set: userData }, { upsert: true, new: true }).exec((error, users) => {
-                    if (error) {
-                        reject({ status: 500, message: 'Internal Serevr Error' });
-                    } else {
-                        console.log("user==============================>", users);
-                        resolve({ status: 200, message: ' User Added Successfully', data: users });
-                    }
-                })
+                // if (file.length > 0) {
+				// 	_.forEach(file, (gotFile) => {
+                //       user.images.push(gotFile.filename)
+                //     })
+                // }
+                // userData.images = user.images;
+                // UserModel.findOneAndUpdate({ _id: user._id }, { $set: userData }, { upsert: true, new: true }).exec((error, users) => {
+                //     if (error) {
+                //         reject({ status: 500, message: 'Internal Serevr Error' });
+                //     } else {
+                //         console.log("user==============================>", users);
+                //         resolve({ status: 200, message: ' User Added Successfully', data: users });
+                //     }
+                // })
                 resolve({ status: 200, message: "New user added successfully.", status: true, });
             }).catch((error) => {
                 console.log(clcError("error: ", error));
@@ -61,9 +54,8 @@ module.exports = {
                     reject({ status: 500, message: 'Internal Serevr Error' });
                 } else if (!user) {
                     reject({ status: 404, message: 'No user found' });
-                } else {
-                    console.log('compare passowrd: ', userData.password, user.password);
-                    const passwordIsValid = bcrypt.compare(userData.password, user.password);
+                } else if(user){
+                    const passwordIsValid = bcrypt.compareSync(userData.password, user.password);
                     console.log('valid password:', passwordIsValid);
                     if (!passwordIsValid) {
                         reject({ status: 401, message: "password is not valid", token: null });
@@ -73,6 +65,8 @@ module.exports = {
                     });
                     console.log('token=============>', token);
                     resolve({ status: 200, message: "login successfull", data: user, token: token });
+                } else {
+                    reject({ status: 404, message: 'Internal Server Error' }); 
                 }
             });
         })
@@ -83,6 +77,7 @@ module.exports = {
      */
     updatePassword: (userData) => {
         return new Promise((resolve, reject) => {
+            // console.log("headers:",req.headers)
            const confirmPassword = bcrypt.hashSync(userData.confirmPassword);
             UserModel.findOneAndUpdate(
                 { email: userData.email },
@@ -106,7 +101,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             UserModel.findOneAndUpdate(
                 { email: userData.email },
-                { resetPasswordHash: userData.resetPasswordHash, emailHash: userData.resetPasswordHash },
+                { resetPasswordHash: userData.resetPasswordHash, emailHash: userData.resetPasswordHash, emailConfirmation: false },
             ).then((data) => {
                 console.log("data", data);
                 if (data) {

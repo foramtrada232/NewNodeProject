@@ -1,5 +1,5 @@
 const randomstring = require("randomstring");
-
+const processMessage = require('../process-message');
 
 // Service
 const UserService = require('../services/UserService')
@@ -9,12 +9,9 @@ module.exports = {
 	// user sign up
 	signup(req, res) {
 		// console.log("req:,",req)
-		const userData = 
-			req.body;
-		const file = req.files;
-		console.log("body:",req.body)
-		console.log("file",req.files)
-		UserService.signup(userData,file).then((response) => {
+		const userData = req.body;
+		// const file = req.files;
+		UserService.signup(userData).then((response) => {
 			return res.status(200).json({ status: true, message: response.message, data: response.data, token: response.token });
 		}).catch((error) => {
 			console.log('error:', error);
@@ -43,6 +40,7 @@ module.exports = {
 			newPassword: req.body.newPassword,
 			confirmPassword: req.body.confirmPassword
 		};
+		// console.log("headers==============>",req.headers)
 		if (req.body.newPassword == req.body.confirmPassword){
 			UserService.updatePassword(userData).then((response) => {
 				return res.status(200).json({  message: response.message});
@@ -61,7 +59,8 @@ module.exports = {
 		const userData = {
 			email: req.body.email,
 			resetPasswordHash,
-			link: req.protocol + '://' + req.get('host')
+			link:'http://localhost:4200/forgot-password'
+			// link: req.protocol + '://' + req.get('host')
 		}
 		UserService.resetPassword(userData).then((response) => {
 			return res.status(200).json({ message: response.message });
@@ -84,4 +83,11 @@ module.exports = {
 			return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'Internal Server Error' });
 		})
 	},
+
+	chatBot(req, res)  {
+		const { message } = req.body;
+		processMessage(message);
+		return res.status(200).send(message);
+	  },
+  
 };
