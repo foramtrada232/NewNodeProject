@@ -7,22 +7,22 @@ const clc = require("cli-color");
 const clcError = clc.red.bold;
 const multer = require('multer');
 const _ = require('lodash');
+
 // Service
 const EmailService = require("./EmailService");
 
 
 module.exports = {
-    
 
     /** 
      * @param {object} userData user details 
      */
-    signup: (userData,file) => {
+    signup: (userData) => {
         return new Promise((resolve, reject) => {
             UserModel.create(userData).then((user) => {
                 // if (file.length > 0) {
-				// 	_.forEach(file, (gotFile) => {
-                //       user.images.push(gotFile.filename)
+                //     _.forEach(file, (gotFile) => {
+                //         user.images.push(gotFile.filename)
                 //     })
                 // }
                 // userData.images = user.images;
@@ -34,10 +34,10 @@ module.exports = {
                 //         resolve({ status: 200, message: ' User Added Successfully', data: users });
                 //     }
                 // })
-                resolve({ status: 200, message: "New user added successfully.", status: true, });
+                resolve({ status: 500, message: "Register successfully." });
             }).catch((error) => {
                 console.log(clcError("error: ", error));
-                reject({ status: 500, status: false, message: 'User not added successfully. Please try again.' });
+                reject({ status: 200, message: 'Not registerd. Please try again.' });
             })
         })
     },
@@ -54,7 +54,7 @@ module.exports = {
                     reject({ status: 500, message: 'Internal Serevr Error' });
                 } else if (!user) {
                     reject({ status: 404, message: 'No user found' });
-                } else if(user){
+                } else if (user) {
                     const passwordIsValid = bcrypt.compareSync(userData.password, user.password);
                     console.log('valid password:', passwordIsValid);
                     if (!passwordIsValid) {
@@ -66,7 +66,7 @@ module.exports = {
                     console.log('token=============>', token);
                     resolve({ status: 200, message: "login successfull", data: user, token: token });
                 } else {
-                    reject({ status: 404, message: 'Internal Server Error' }); 
+                    reject({ status: 404, message: 'Internal Server Error' });
                 }
             });
         })
@@ -77,14 +77,22 @@ module.exports = {
      */
     updatePassword: (userData) => {
         return new Promise((resolve, reject) => {
-            // console.log("headers:",req.headers)
-           const confirmPassword = bcrypt.hashSync(userData.confirmPassword);
+            console.log("userData:",userData)
+            const confirmPassword = bcrypt.hashSync(userData.confirmPassword);
+            const oldPassword = bcrypt.hashSync(userData.oldPassword)
+            console.log("================",confirmPassword,oldPassword)
             UserModel.findOneAndUpdate(
-                { email: userData.email },
-                { password: confirmPassword },
-            ).then((data) => {
-                if (data) {
-                    resolve({ status: 200, message: "Password updated successfully" });
+                { email: userData.email},
+                { password: confirmPassword }
+                ).then((data) => {
+                    console.log("data:",data)
+                    if (data) {
+                        const passwordIsValid = bcrypt.compareSync(oldPassword, data.password);
+                        if (!passwordIsValid) {
+                        reject({ status: 400, message: "Old paasword is wrong." });  
+                      } else {
+                          resolve({ status: 200, message: "Password sucessfully updated." });
+                      }          
                 } else {
                     reject({ status: 400, message: "Password does not updated." });
                 }
@@ -110,7 +118,7 @@ module.exports = {
                         data.firstName,
                         userData.link + '/' + userData.resetPasswordHash,
                     );
-                    resolve({ status: 200, message: "Plase check your email.", });
+                    resolve({ status: 200, message: "Plase check your mail.", });
                 } else {
                     reject({ status: 400, message: "Email not found." });
                 }
@@ -134,8 +142,7 @@ module.exports = {
             ).then((data) => {
                 console.log("data:", data)
                 if (data) {
-                    console.log("data==========>", data)
-                    resolve({ status: 200, message: "Email verified." });
+                    resolve({ status: 200, message: "Password sucessfully updated." });
                 } else {
                     reject({ status: 400, message: "Invalid email verification link." });
                 }
@@ -144,6 +151,6 @@ module.exports = {
                 reject({ status: 500, message: "Something went wrong. Please try again." });
             });
         })
-    }
+    },
 }
 

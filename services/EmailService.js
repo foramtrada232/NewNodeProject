@@ -13,21 +13,23 @@ const transporter = nodemailer.createTransport({
 
 transporter.use("compile", mailerhbs({
     viewPath: "emailTemplate",
-    extName: ".hbs", 
+    extName: ".hbs",
 }));
 
 const createParams = (from, to, subject, template, name, link) => ({
     from,
     to,
     subject,
-    template, 
-    context: { 
+    template,
+    context: {
         name,
         email: to,
         link
     },
 });
+
 module.exports = {
+
     resetPassword: (to, name, link) => {
         return new Promise((resolve, reject) => {
             const params = createParams(
@@ -43,12 +45,11 @@ module.exports = {
                     console.log("Error", error);
                     reject({ status: 500, message: 'Internal Serevr Error' });
                 } else {
-                    console.log("link:",link)
+                    console.log("link:", link)
                     console.log('Email sent: ' + info.response);
                     resolve({ status: 200, message: 'Email sent:' + info.response });
                 }
             });
         })
     }
-
 };

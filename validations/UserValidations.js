@@ -1,5 +1,5 @@
 module.exports = {
-	// validation for user signup
+	/** validation for user signup */
 	signup(req, res, next) {
 		req.checkBody("firstName", "Firstname is required").trim().notEmpty();
 		req.checkBody("lastName", "Lastname is required").trim().notEmpty();
@@ -14,13 +14,13 @@ module.exports = {
 			.then(() => {
 				next();
 			})
-			.catch(errors => res.json({
+			.catch(errors => res.status(500).json({
 				success: false,
 				errors: errors[0].msg,
 			}));
 	},
 
-	// login validation
+	/** login validation */
 	login(req, res, next) {
 		req.checkBody("userName", "Username is required").trim().notEmpty();
 		req.checkBody("password", "Password is required").trim().notEmpty();
@@ -29,29 +29,30 @@ module.exports = {
 			.then(() => {
 				next();
 			})
-			.catch(errors => res.json({
+			.catch(errors => res.status(500).json({
 				success: false,
 				errors: errors[0].msg,
 			}));
 	},
-	
-	// change password validation
+
+	/** change password validation */
 	updatePassword(req, res, next) {
 		req.checkBody("email", "Email is required").trim().notEmpty();
+		req.checkBody("oldPassword", "Old paasword is required").trim().notEmpty();
 		req.checkBody("newPassword", "New password is required").trim().notEmpty();
 		req.checkBody("confirmPassword", "ConfirmPassword is not match with password").equals(req.body.newPassword);
 
 		req.asyncValidationErrors()
-		.then(() => {
-			next();
-		})
-		.catch(errors => res.json({
-			success: false,
-			errors: errors[0].msg,
-		}));
+			.then(() => {
+				next();
+			})
+			.catch(errors => res.status(500).json({
+				success: false,
+				errors: errors[0].msg,
+			}));
 	},
 
-	// forgot password validation
+	/** forgot password validation */
 	resetPassword(req, res, next) {
 		req.checkBody("email", "Email is required").trim().notEmpty();
 		req.checkBody("email", "Email is not valid").trim().isEmail();
@@ -60,7 +61,7 @@ module.exports = {
 			.then(() => {
 				next();
 			})
-			.catch(errors => res.json({
+			.catch(errors => res.status(500).json({
 				success: false,
 				errors: errors[0].msg,
 			}));
