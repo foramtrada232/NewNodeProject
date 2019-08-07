@@ -56,7 +56,7 @@ module.exports = {
 				return res.status(error.status ? error.status : 500).json({ message: error.message ? error.message : 'internal server error' });
 			})
 		} else {
-			res.status(400).json({ message: "password dose not match" });
+			res.status(400).json({ message: "New and Confirm password dose not match" });
 		}
 	},
 
